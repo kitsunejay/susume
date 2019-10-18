@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Servers</title>
+  </head>
+  <body>
+    <div class="container">
+      <ol class="breadcrumb my-4"> 
+        <li class="breadcrumb-item active">Servers ({{ servers|length }}) </li>
+      </ol>
+    <table class="table table-striped" border="1">
+      <thead class="thead-dark">
+        <tr>
+          <th>ID</th>
+          <th>EN</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for server in servers %}
+          <tr>
+            <td class="align-middle">
+              {{ server.id }}
+            </td>
+            <td class="align-middle">
+              {{ server.en }}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </body>
+</html>

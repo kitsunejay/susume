@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+  integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Spells</title>
+</head>
+
+<body>
+  <div class="container">
+    <ol class="breadcrumb my-4">
+      <li class="breadcrumb-item active">Spells ({{ spells|length }}) </li>
+    </ol>
+    <table class="table table-striped" border="1">
+      <thead class="thead-dark">
+        <tr>
+          <th>Id</th>
+          <th>EN</th>
+          <th>JP</th>
+          <th>Cast Time</th>
+          <th>Element</th>
+          <th>Icon ID</th>
+          <th>MP Cost</th>
+          <th>Range</th>
+          <th>Recast</th>
+          <th>Skill</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!--    #[1] = {id=1,en="Cure",ja="ケアル",cast_time=2,element=6,icon_id=86,icon_id_nq=6,levels={[3]=1,[5]=3,[7]=5,[20]=5},mp_cost=8,prefix="/magic",range=12,recast=5,recast_id=1,requirements=1,skill=33,targets=63,type="WhiteMagic"}, -->
+
+        {% for spell in spells %}
+        <tr>
+          <td class="align-middle">
+            {{ spell.id }}
+          </td>
+          <td class="align-middle">
+            {{ spell.en }}
+          </td>
+          <td class="align-middle">
+            {{ spell.ja }}
+          </td>
+          <td class="align-middle">
+            {{ spell.cast_time }}
+          </td>
+          <td class="align-middle">
+            {{ spell.element }}
+          </td>
+          <td class="align-middle">
+            {{ spell.icon_id }}
+          </td>
+          <td class="align-middle">
+            {{ spell.mp_cost }}
+          </td>
+          <td class="align-middle">
+            {{ spell.spell_range }}
+          </td>
+          <td class="align-middle">
+            {{ spell.recast }}
+          </td>
+          <td class="align-middle">
+            {{ spell.skill }}
+          </td>
+          <td class="align-middle">
+            {{ spell.spell_type }}
+          </td>
+        </tr>
+        {% empty %}
+        <tr class="align-middle">
+          <td>
+            No results
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+
+</html>
