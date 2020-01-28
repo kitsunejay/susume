@@ -52,8 +52,8 @@ class Item(models.Model):
     item_level = models.IntegerField(default=1)
     superior_level = models.IntegerField(default=1)
 
-    description_en = models.CharField(max_length=255, default='Money')
-    description_ja = models.CharField(max_length=255, default='Money')
+    desc_en = models.CharField(max_length=255, default='Money')
+    desc_ja = models.CharField(max_length=255, default='Money')
 
     def __str__(self):
         return self.en
@@ -66,8 +66,10 @@ class Equipment(Item):
     #question_text = models.CharField(max_length=200)
     #pub_date = models.DateTimeField('date published')
     #votes = models.IntegerField(default=0)
+    equipment_type = models.CharField(max_length=200,default='EquipmentType')
 
     pass
+
 class AugmentedEquipment(Item):
     #question_text = models.CharField(max_length=200)
     #pub_date = models.DateTimeField('date published')

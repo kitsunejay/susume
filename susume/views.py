@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core import serializers
 import json
 
-from .models import Job, Spell, Server
+from .models import Job, Spell, Server, Slot, Ability, Equipment
 
 # Create your views here.
 
@@ -14,24 +14,28 @@ def index(request):
     return HttpResponse("Hello, world. You're at the susume index.")
 
 @csrf_exempt
+def dne(request):
+    return render(request, 'dne.html')
+
+@csrf_exempt
 def job(request, id=None):
     if request.method == "POST":
         if request.content_type == 'application/json':
-            job_json = json.loads(request.body)
+            this_json = json.loads(request.body)
             to_deserialize = []
-            for j in job_json:
-                nj = {"model":"susume.job","fields":{}}
+            for item in this_json:
+                new_item = {"model":"susume.job","fields":{}}
                 try:
-                    for k,v in j.items():
-                        nj["fields"][k] = v
+                    for k,v in item.items():
+                        new_item["fields"][k] = v
                 except KeyError as e:
                     return HttpResponse(e,status=400)
                 # Add new job to list of dict to be deserialized
-                to_deserialize.append(nj)
+                to_deserialize.append(new_item)
                 # Validate fields and attempt to create/update
-            for deserialized_job in serializers.deserialize("json",json.dumps(to_deserialize)):
-                deserialized_job.object.full_clean(validate_unique=False)
-                deserialized_job.object.save()
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
             return render(request, 'jobs.html', {'jobs': Job.objects.all()})
         else:
             return HttpResponse("JSON ONLY")
@@ -57,19 +61,19 @@ def spell(request, id=None):
         if request.content_type == 'application/json':
             spell_json = json.loads(request.body)
             to_deserialize = []
-            for s in spell_json:
-                ns = {"model":"susume.spell","fields":{}}
+            for item in this_json:
+                new_item = {"model":"susume.spell","fields":{}}
                 try:
-                    for k,v in s.items():
-                        ns["fields"][k] = v
+                    for k,v in item.items():
+                        new_item["fields"][k] = v
                 except KeyError as e:
                     return HttpResponse(e,status=400)
                 # Add new job to list of dict to be deserialized
-                to_deserialize.append(ns)
+                to_deserialize.append(new_item)
                 # Validate fields and attempt to create/update
-            for deserialized_spell in serializers.deserialize("json",json.dumps(to_deserialize)):
-                deserialized_spell.object.full_clean(validate_unique=False)
-                deserialized_spell.object.save()
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
             return render(request, 'spells.html', {'spells': Spell.objects.all()})
         else:
             return HttpResponse("JSON ONLY")
@@ -82,6 +86,38 @@ def spell(request, id=None):
     else:
         spells = Spell.objects.all()
     return render(request, 'spells.html', {'spells': spells})
+
+@csrf_exempt
+def ability(request, id=None):
+    if request.method == "POST":
+        if request.content_type == 'application/json':
+            this_json = json.loads(request.body)
+            to_deserialize = []
+            for item in this_json:
+                new_item = {"model":"susume.ability","fields":{}}
+                try:
+                    for k,v in item.items():
+                        new_item["fields"][k] = v
+                except KeyError as e:
+                    return HttpResponse(e,status=400)
+                # Add new job to list of dict to be deserialized
+                to_deserialize.append(new_item)
+                # Validate fields and attempt to create/update
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
+            return render(request, 'abilities.html', {'abilities': Ability.objects.all()})
+        else:
+            return HttpResponse("JSON ONLY")
+    if id:
+        try:
+            ability = Ability.objects.get(id=id)
+            abilities = [ability]
+        except ObjectDoesNotExist:
+            return render(request, 'dne.html')
+    else:
+        abilities = Ability.objects.all()
+    return render(request, 'abilities.html', {'abilities': abilities})
 
 @csrf_exempt
 def server(request, id=None):
@@ -99,9 +135,9 @@ def server(request, id=None):
                 # Add new job to list of dict to be deserialized
                 to_deserialize.append(ns)
                 # Validate fields and attempt to create/update
-            for deserialized_spell in serializers.deserialize("json",json.dumps(to_deserialize)):
-                deserialized_spell.object.full_clean(validate_unique=False)
-                deserialized_spell.object.save()
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
             return render(request, 'servers.html', {'servers': Server.objects.all()})
         else:
             return HttpResponse("JSON ONLY")
@@ -114,3 +150,67 @@ def server(request, id=None):
     else:
         servers = Server.objects.all()
     return render(request, 'servers.html', {'servers': servers})
+
+@csrf_exempt
+def slot(request, id=None):
+    if request.method == "POST":
+        if request.content_type == 'application/json':
+            slot_json = json.loads(request.body)
+            to_deserialize = []
+            for s in slot_json:
+                ns = {"model":"susume.slot","fields":{}}
+                try:
+                    for k,v in s.items():
+                        ns["fields"][k] = v
+                except KeyError as e:
+                    return HttpResponse(e,status=400)
+                # Add new job to list of dict to be deserialized
+                to_deserialize.append(ns)
+                # Validate fields and attempt to create/update
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
+            return render(request, 'slots.html', {'slots': Slot.objects.all()})
+        else:
+            return HttpResponse("JSON ONLY")
+    if id:
+        try:
+            slot = Slot.objects.get(id=id)
+            slots = [slot]
+        except ObjectDoesNotExist:
+            return render(request, 'dne.html')
+    else:
+        slots = Slot.objects.all()
+    return render(request, 'slots.html', {'slots': slots})
+
+@csrf_exempt
+def equipment(request, id=None):
+    if request.method == "POST":
+        if request.content_type == 'application/json':
+            equipment_json = json.loads(request.body)
+            to_deserialize = []
+            for s in equipment_json:
+                ns = {"model":"susume.equipment","fields":{}}
+                try:
+                    for k,v in s.items():
+                        ns["fields"][k] = v
+                except KeyError as e:
+                    return HttpResponse(e,status=400)
+                # Add new job to list of dict to be deserialized
+                to_deserialize.append(ns)
+                # Validate fields and attempt to create/update
+            for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
+                deserialized_item.object.full_clean(validate_unique=False)
+                deserialized_item.object.save()
+            return render(request, 'equipment.html', {'equipment': Equipment.objects.all()})
+        else:
+            return HttpResponse("JSON ONLY")
+    if id:
+        try:
+            item = Equipment.objects.get(id=id)
+            items = [item]
+        except ObjectDoesNotExist:
+            return render(request, 'dne.html')
+    else:
+        items = Equipment.objects.all()
+    return render(request, 'Equipment.html', {'equipment': items})
