@@ -6,6 +6,12 @@ from django.core import serializers
 import json
 
 from .models import Job, Spell, Server, Slot, Ability, Equipment
+#
+import pathlib
+import sys
+sys.path.append(pathlib.Path(__file__).parent.name + '/libs/')
+
+import helpers
 
 # Create your views here.
 
@@ -214,3 +220,28 @@ def equipment(request, id=None):
     else:
         items = Equipment.objects.all()
     return render(request, 'Equipment.html', {'equipment': items})
+
+def dynamic_template(request, page):
+    data = Slot.objects.values()
+    fields = []
+    for f in data:
+        fields = fields + list(f.keys())
+    fields = set(fields)
+    #print(fields)
+    page = {}
+    page['name'] = "Slots"
+    page['title'] = page['name']
+    page['menu_dropdown'] = [
+        {'name':'Jobs','endpoint':'/susume/jobs'},
+        {'name':'Servers','endpoint':'/susume/servers'},
+        {'name':'Slots','endpoint':'/susume/slots'},
+        {'name':'Spells','endpoint':'/susume/spells'},
+        {'name':'Abilities','endpoint':'/susume/abilities'},
+    ],
+    page['fields'] = fields
+
+    data = Slot.objects.all()
+    return render(request, 'dynamic.html',
+        {'app_name': 'Susume',
+         'page': page,
+         'data': data})

@@ -16,11 +16,10 @@ local_url = 'http://localhost:8000/susume/'
 ######################################
 
 
-
-def get_resource(path,decode=True):
+def get_resource(path,decode=True,char_encoding='utf8'):
     if platform.system() == 'Windows':
         path = 'C:\\Program Files (x86)\\Windower4\\res\\' + path
-    with open(path, encoding="utf8",newline='') as fd:
+    with open(path, encoding=char_encoding,newline='') as fd:
         data = fd.read().replace('return', '', 1)
         if decode: 
             return lua.decode(data)
@@ -32,38 +31,7 @@ def chunks(lst, n):
     for i in range(0, len(lst), n):
         yield lst[i:i + n]
 
-def get_nonutf_resource(path):
-    if platform.system() == 'Windows':
-        path = 'C:\\Program Files (x86)\\Windower4\\res\\' + path
-    with open(path, encoding="utf8",newline='') as fd:
-        luastring = ""
-        data = fd.read()
-        #print(len(data))
-        '''
-        for i in range(len(data)):
-            thisline = data[i]
-            thisline = thisline.replace('return','',1)
-            #thisline = re.sub(r"(\w)-(\w)",r"\1 \2",thisline)
-            if re.match(".*\w-\w.*",data[i]):
-                print(data[i])
-                data[i].replace("-"," ", 1)
-                print(data[i])
-
-            #print(luastring,end = "\r\n")
-        '''
-        print(data)
-        '''
-            luastring = luastring + thisline
-            
-            for m in re.finditer('(?P<tag>\w+)=',luastring):
-                print(m.group('tag'))
-            '''
-            # FIX ME # 
-            #return lua.decode(luastring)
-#get_nonutf_resource('item_descriptions.lua')
-
-
-def lua_parse(string=''):
+def desc_parse(string=''):
     return_dict = {}
 
     p = re.compile('\s*?\{{0,1}\s*?\[(?P<key>\d+)\]\s*?=\s*?{id=(?P<id>\d+),en=\"(?P<en>.+?)\",ja\=\"(?P<ja>.+)\"},{0,1}\}{0,1}',re.DOTALL)
@@ -81,31 +49,6 @@ def lua_parse(string=''):
             #print('['+split_string[i]+']')
             next
     return return_dict
-
-
-'''
-res_jobs = get_resource('jobs.lua')
-
-#print(len(items.keys()))
-#print(type(items))
-
-
-jobs_json = []
-
-for k in res_jobs.keys():
-    print("{}={}".format(k,res_jobs[k]))
-    jobs_json.append(res_jobs[k])
-for k in res_jobs.keys():
-    print("{},{}".format(res_jobs[k]['en'],res_jobs[k]['ens']))
-
-#print(jobs_json)
-#print('\n')
-print(json.dumps(jobs_json))
-
-resp = requests.post('http://localhost:8000/susume/jobs/',json=jobs_json)
-print(json.dumps(jobs_json))
-print("RESPONSE: "+resp.text)
-'''
 
 # Just EN and ID
 def update_simple(path,url,print_only=False):
@@ -191,7 +134,7 @@ def update_abilities(url,path='job_abilties.lua',print_only=False):
 
 def update_equipment(url,path='items.lua',print_only=False):
     res = get_resource(path)
-    res_desc = lua_parse(get_resource('item_descriptions.lua',decode=False))
+    res_desc = desc_parse(get_resource('item_descriptions.lua',decode=False))
     this_list = []
 
     for k in list(res.keys()):
@@ -227,7 +170,7 @@ def update_equipment(url,path='items.lua',print_only=False):
     resp = []
     for c in chunks(this_list,1000):
         chnk.append(c)
-    print(len(chnk))
+    #print(len(chnk))
     for c in chnk:
         resp.append(requests.post(url,json=c))
         
