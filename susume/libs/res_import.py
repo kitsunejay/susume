@@ -222,4 +222,5 @@ def update_equipment(url,path='items.lua',print_only=False):
 #items_resp = update_equipment(path='items.lua',url=local_url+'equipment',print_only=True)
 items_resp = update_equipment(path='items.lua',url=local_url+'equipment')
 for r in items_resp:
-    print(r.status_code)
+    #print(r.status_code)
+    print('[%s]==>"%s"' % (r.status_code,r.reason))
