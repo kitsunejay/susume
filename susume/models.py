@@ -52,8 +52,11 @@ class Item(models.Model):
     item_level = models.IntegerField(default=1)
     superior_level = models.IntegerField(default=1)
 
-    desc_en = models.CharField(max_length=255, default='Money')
-    desc_ja = models.CharField(max_length=255, default='Money')
+    #desc_en = models.CharField(max_length=255, default='Money')
+    #desc_ja = models.CharField(max_length=255, default='Money')
+    
+    desc_en = models.TextField(blank=True)
+    desc_ja = models.TextField(blank=True)
 
     def __str__(self):
         return self.en

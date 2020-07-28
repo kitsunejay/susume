@@ -31,7 +31,7 @@ urlpatterns = [
     re_path(r'^equipment/.+/*$', views.equipment, name='equipment'),
     
     # Testing
-    re_path(r'^dyna/(?P<page>[a-z]+)/*$', views.dynamic_template, name='dynamic_template'),
+    re_path(r'^dyna/(?P<req_page>[a-z]+)/*$', views.dynamic_template, name='dynamic_template'),
 
     # Vanilla testing DNE
     re_path(r'^.*$', views.dne, name='dne'),

@@ -206,8 +206,11 @@ def equipment(request, id=None):
                 to_deserialize.append(ns)
                 # Validate fields and attempt to create/update
             for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
-                deserialized_item.object.full_clean(validate_unique=False)
-                deserialized_item.object.save()
+                try:
+                    deserialized_item.object.full_clean(validate_unique=False)
+                    deserialized_item.object.save()
+                except Exception as e:
+                    print(e,deserialized_item.object.id,deserialized_item.object.en)
             return render(request, 'equipment.html', {'equipment': Equipment.objects.all()})
         else:
             return HttpResponse("JSON ONLY")
@@ -221,16 +224,22 @@ def equipment(request, id=None):
         items = Equipment.objects.all()
     return render(request, 'Equipment.html', {'equipment': items})
 
-def dynamic_template(request, page):
+def dynamic_template(request, req_page="jobs"):
     data = Slot.objects.values()
     fields = []
     for f in data:
         fields = fields + list(f.keys())
     fields = set(fields)
-    #print(fields)
+    print(fields)
+        
     page = {}
-    page['name'] = "Slots"
-    page['title'] = page['name']
+    
+    if req_page:
+        page['name'] = req_page
+        page['title'] = page['name']
+    else:
+        page['name'] = "Jobs"
+        page['title'] = page['name']
     page['menu_dropdown'] = [
         {'name':'Jobs','endpoint':'/susume/jobs'},
         {'name':'Servers','endpoint':'/susume/servers'},
