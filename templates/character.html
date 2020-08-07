@@ -10,7 +10,6 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
 <script src="{% static "susume/tables.js" %}"></script>
 
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -24,7 +23,6 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-      
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item dropdown">
@@ -47,28 +45,12 @@
           </form>
         </div>
       </nav>
-    <div class="container">
-      <ol class="breadcrumb my-4"> 
-        <li class="breadcrumb-item active">{{ page.name|title }} ({{ data|length }}) </li>
-      </ol>
-      <table id="basicTable" class="table table-striped table-bordered table-sm">
-        <thead class="thead-dark">
-          <tr>
-            {% for field in page.fields %}
-              <th>{{ field|upper }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for record in data %}
-          <tr>
-            {% for key, value in record.items %}
-              <td> {{ value }} </td>
-            {% endfor %}
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="container">
+        <form action="/susume/character/" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Submit">
+        </form>
     </div>
-  </body>
+</body>
 </html>

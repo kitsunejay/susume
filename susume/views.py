@@ -6,6 +6,9 @@ from django.core import serializers
 import json
 
 from .models import Job, Spell, Server, Slot, Ability, Equipment
+from .forms import CharacterForm, LoadoutForm
+
+
 #
 import pathlib
 import sys
@@ -65,7 +68,7 @@ def job(request, id=None):
 def spell(request, id=None):
     if request.method == "POST":
         if request.content_type == 'application/json':
-            spell_json = json.loads(request.body)
+            this_json = json.loads(request.body)
             to_deserialize = []
             for item in this_json:
                 new_item = {"model":"susume.spell","fields":{}}
@@ -76,7 +79,7 @@ def spell(request, id=None):
                     return HttpResponse(e,status=400)
                 # Add new job to list of dict to be deserialized
                 to_deserialize.append(new_item)
-                # Validate fields and attempt to create/update
+            # Validate fields and attempt to create/update
             for deserialized_item in serializers.deserialize("json",json.dumps(to_deserialize)):
                 deserialized_item.object.full_clean(validate_unique=False)
                 deserialized_item.object.save()
@@ -224,14 +227,17 @@ def equipment(request, id=None):
         items = Equipment.objects.all()
     return render(request, 'Equipment.html', {'equipment': items})
 
-def dynamic_template(request, req_page="jobs"):
-    data = Slot.objects.values()
+def dynamic_template(request, req_page="blank"):
+    data = eval(req_page.capitalize()).objects.values()
     fields = []
+    
     for f in data:
         fields = fields + list(f.keys())
     fields = set(fields)
+
     print(fields)
-        
+    print(len(fields))
+ 
     page = {}
     
     if req_page:
@@ -240,17 +246,86 @@ def dynamic_template(request, req_page="jobs"):
     else:
         page['name'] = "Jobs"
         page['title'] = page['name']
+
     page['menu_dropdown'] = [
-        {'name':'Jobs','endpoint':'/susume/jobs'},
-        {'name':'Servers','endpoint':'/susume/servers'},
-        {'name':'Slots','endpoint':'/susume/slots'},
-        {'name':'Spells','endpoint':'/susume/spells'},
-        {'name':'Abilities','endpoint':'/susume/abilities'},
-    ],
+            {'name':'Jobs','endpoint':'/susume/jobs'},
+            {'name':'Servers','endpoint':'/susume/servers'},
+            {'name':'Slots','endpoint':'/susume/slots'},
+            {'name':'Spells','endpoint':'/susume/spells'},
+            {'name':'Abilities','endpoint':'/susume/abilities'},
+            {'name':'Equipment','endpoint':'/susume/equipment'},
+        ]
     page['fields'] = fields
 
-    data = Slot.objects.all()
+    #data = eval(req_page.capitalize()).objects.values()
+    #print(data.keys())
     return render(request, 'dynamic.html',
         {'app_name': 'Susume',
          'page': page,
          'data': data})
+
+def loadout(request,loadout={}):
+    page = {}
+
+    page['name'] = "Loadout"
+    page['title'] = page['name']
+
+    page['menu_dropdown'] = [
+            {'name':'Jobs','endpoint':'/susume/jobs'},
+            {'name':'Servers','endpoint':'/susume/servers'},
+            {'name':'Slots','endpoint':'/susume/slots'},
+            {'name':'Spells','endpoint':'/susume/spells'},
+            {'name':'Abilities','endpoint':'/susume/abilities'},
+            {'name':'Equipment','endpoint':'/susume/equipment'},
+        ]
+    page['fields'] = set()
+    form = LoadoutForm()
+
+    return render(request, 'loadout.html',{'form':form})
+
+def get_character(request,pid=None):
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = CharacterForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+            # ...
+            return render(request, 'character.html', {'id': form.cleaned_data['id']})
+    if pid:
+        try:
+            character = Character.objects.get(id=pid)
+            characters = [character]
+            
+            return render(request, 'character.html', {'characters': pid})
+
+        except ObjectDoesNotExist:
+            form = CharacterForm()
+            return render(request, 'character.html', {'form': form})
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = CharacterForm()
+
+    return render(request, 'character.html', {'form': form})
+
+#################################
+#           A   P   I           #
+#################################
+
+@csrf_exempt
+def aggregate_loadout(request):
+    if request.method == 'POST':
+        response = {
+            "result":"success",
+            "text":"Great job!",
+            "data": json.loads(request.body),
+            "agg":{}
+        }
+        return JsonResponse(response)
+    else:
+        response = {
+            "result":"error",
+            "text":"Please POST"
+        }
+        return JsonResponse(response)

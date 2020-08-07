@@ -111,6 +111,7 @@ class Ability(models.Model):
     #{"id", "en", "ja", "duration", "element", "icon_id", "mp_cost", "prefix", "range", "recast_id", "targets", "tp_cost", "type"}
     #[35] = {id=35,en="Provoke",ja="挑発",element=1,icon_id=360,mp_cost=0,prefix="/jobability",range=11,recast_id=5,targets=32,tp_cost=0,type="JobAbility"},
     #[16] = {id=16,en="Mighty Strikes",ja="マイティストライク",duration=45,element=0,icon_id=66,mp_cost=0,prefix="/jobability",range=0,recast_id=0,targets=1,tp_cost=0,type="JobAbility"},
+    #[51] = {id=51,en="Last Resort",ja="ラストリゾート",duration=180,element=0,icon_id=414,mp_cost=0,prefix="/jobability",range=0,recast_id=87,status=64,targets=1,tp_cost=0,type="JobAbility"},
 
     id = models.IntegerField(primary_key=True)
     en = models.CharField(max_length=200, default='Provoke')
@@ -123,6 +124,7 @@ class Ability(models.Model):
     prefix = models.CharField(max_length=200,default='/jobability')
     ability_range = models.IntegerField(default=0)
     recast_id = models.IntegerField(default=0)
+    status = models.IntegerField(default=0)
     targets = models.IntegerField(default=1)
     tp_cost = models.IntegerField(default=0)
     ability_type = models.CharField(max_length=200,default='JobAbility')
@@ -162,6 +164,7 @@ class Spell(models.Model):
     icon_id = models.IntegerField(default=0)
     icon_id_nq= models.IntegerField(default=0)
     #levels
+    blu_points = models.IntegerField(default=1)
     mp_cost = models.IntegerField(default=1)
     prefix = models.CharField(max_length=200,default='/magic')
     spell_range = models.IntegerField(default=0)

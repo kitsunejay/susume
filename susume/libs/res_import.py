@@ -53,20 +53,27 @@ def desc_parse(string=''):
 # Just EN and ID
 def update_simple(path,url,print_only=False):
     res = get_resource(path)
-    simple_list = []
+    #print(len(res))
+    this_list = []
 
     # Scrub data here
     #
     #
-        
-    for k,v in res.items():
-        simple_list.append(v)
-    
+    if isinstance(res,list):
+        for i in res:
+            this_list.append(i)
+    else:
+        try:    
+            for k,v in res.items():
+                this_list.append(v)
+        except:
+            print("Was returned a strange decode for: "+path+" type:"+str(type(res)))
+            #print(res)
     if print_only:
-        pprint(simple_list)
+        pprint(this_list)
         return
 
-    resp = requests.post(url,json=simple_list)
+    resp = requests.post(url,json=this_list)
     return resp
 
 def update_jobs(path='jobs.lua',print_only=False):
@@ -87,12 +94,12 @@ def update_jobs(path='jobs.lua',print_only=False):
     resp = requests.post('http://localhost:8000/susume/jobs/',json=this_list)
 
 
-def update_spells(path='spells.lua',print_only=False):
+def update_spells(url,path='spells.lua',print_only=False):
     res = get_resource(path)
     this_list = []
 
     for k,v in res.items():
-        spell_list.append(v)
+        this_list.append(v)
     
     for item in this_list:
         # Scrub levels key
@@ -188,39 +195,41 @@ def update_equipment(url,path='items.lua',print_only=False):
 ######################################################
 
 #jobs_resp = update_simple(path='jobs.lua',url=local_url+'jobs',print_only=True)
-#jobs_resp = update_simple(path='jobs.lua',url=local_url+'jobs')
-#print(jobs_resp.status_code)
+jobs_resp = update_simple(path='jobs.lua',url=local_url+'jobs')
+print(jobs_resp.status_code)
 
 ######################################################
 #   Update Servers
 ######################################################
 
 #server_resp = update_simple(path='servers.lua',url=local_url+'servers',print_only=True)
-#server_resp = update_simple(path='servers.lua',url=local_url+'servers')
-#print(server_resp.status_code)
+server_resp = update_simple(path='servers.lua',url=local_url+'servers')
+print(server_resp.status_code)
 
 ######################################################
 #   Update Slots
 ######################################################
 
 #slots_resp = update_simple(path='slots.lua',url=local_url+'slots',print_only=True)
-#slots_resp = update_simple(path='slots.lua',url=local_url+'slots')
-#print(slots_resp.status_code)
+slots_resp = update_simple(path='slots.lua',url=local_url+'slots')
+print(slots_resp.status_code)
 
 ######################################################
 #   Update Abiltiies
 ######################################################
 
 #abilities_resp = update_abilities(path='job_abilities.lua',url=local_url+'abilities',print_only=True)
-#abilities_resp = update_abilities(path='job_abilities.lua',url=local_url+'abilities')
-#print(abilities_resp.status_code)
+abilities_resp = update_abilities(path='job_abilities.lua',url=local_url+'abilities')
+print(abilities_resp.status_code)
 
 ######################################################
 #   Update Equipment (From Items.lua)
 ######################################################
 
 #items_resp = update_equipment(path='items.lua',url=local_url+'equipment',print_only=True)
-items_resp = update_equipment(path='items.lua',url=local_url+'equipment')
+#items_resp = update_equipment(path='items.lua',url=local_url+'equipment')
+'''
 for r in items_resp:
     #print(r.status_code)
     print('[%s]==>"%s"' % (r.status_code,r.reason))
+'''
